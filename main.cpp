@@ -1,26 +1,35 @@
-// ----------------------------------------------------------------------------
-// C++ TEXT SERVER (main.cpp)
-// ----------------------------------------------------------------------------
-// This file serves raw text to the browser.
-// No HTML. No CSS. Just C++ strings.
-// ----------------------------------------------------------------------------
 
 #include <iostream>
 #include <string>
+#include <chrono>
 #include "httplib.h"
 
 int main() {
-    // 1. Initialize the Server object
     httplib::Server svr;
 
-    // 2. Define the route
     svr.Get("/", [](const httplib::Request& req, httplib::Response& res) {
+        auto start = std::chrono::high_resolution_clock::now();
         
         std::cout << "[LOG] Request received." << std::endl;
 
-        // "text/plain" ensures the browser treats this as raw text, 
-        // not attempting to parse any tags.
-        res.set_content("Hello from C++!\nThis is pure text content.\nNo HTML tags are used here.", "text/plain");
+        // Simulate logic processing time if needed, or just measure the overhead
+        // calculating the response creation time.
+        
+        auto end = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<double, std::milli> elapsed = end - start;
+        
+        std::string content = "hello from vamsi!\n";
+        content += "this is pure text content.\n";
+        content += "no html tags are used here.\n\n";
+        content += "server render time: " + std::to_string(elapsed.count()) + " ms";
+
+        res.set_content(content, "text/plain");
+    });
+
+    svr.Get("/2", [] (const httplib:: Request& reg, httplib::Response& res) {
+        std::cout<<"[LOG2] req recieved"<< std::endl;
+        res.set_content(" this is pure genius ntenti am the best \t ","text/plain");
+
     });
 
     // 3. Start the Server
